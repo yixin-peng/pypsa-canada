@@ -1,4 +1,4 @@
-# scripts/solve_planning.py
+# scripts/create_dispatch_network.py
 import logging
 import sys
 import traceback

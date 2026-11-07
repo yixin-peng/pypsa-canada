@@ -7,7 +7,27 @@ import numpy as np
 import pandas as pd
 import pypsa
 from matplotlib import pyplot as plt
-from sklearn_extra.cluster import KMedoids
+
+from scipy.spatial.distance import pdist, squareform
+import kmedoids as _kmedoids_backend
+
+
+class KMedoids:
+    """Drop-in replacement for sklearn_extra.cluster.KMedoids,
+    backed by the `kmedoids` package (FasterPAM), which avoids the
+    glibc>=2.28 dependency that sklearn_extra's numpy2-compatible fork requires."""
+
+    def __init__(self, n_clusters):
+        self.n_clusters = n_clusters
+
+    def fit(self, X):
+        X = np.asarray(X, dtype=float)
+        diss = squareform(pdist(X, metric="euclidean"))
+        result = _kmedoids_backend.fasterpam(diss, self.n_clusters)
+        self.labels_ = np.asarray(result.labels)
+        self.medoid_indices_ = np.asarray(result.medoids)
+        self.cluster_centers_ = X[self.medoid_indices_]
+        return self
 
 RES = ["wind", "solar"]
 HD = 24

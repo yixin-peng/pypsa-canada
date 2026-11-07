@@ -1,4 +1,4 @@
-# scripts/add_loads.py
+# scripts/modify_components.py
 import logging
 import sys
 import traceback
